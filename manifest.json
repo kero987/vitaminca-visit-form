@@ -1,0 +1,13 @@
+{
+  "name": "Vitaminca Visit Form",
+  "short_name": "VisitForm",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1976d2",
+  "icons": [{
+    "src": "https://via.placeholder.com/192",
+    "type": "image/png",
+    "sizes": "192x192"
+  }]
+}
