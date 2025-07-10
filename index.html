@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vitaminca Visit Form</title>
+  <link rel="manifest" href="manifest.json">
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const visitTypeEl = document.getElementById('visitType');
+      const pharmacyFields = document.getElementById('pharmacyFields');
+      const statusEl = document.getElementById('status');
+
+      function updateFieldVisibility() {
+        const type = visitTypeEl.value;
+        pharmacyFields.style.display = (type === 'Pharmacy' || type === 'Drug Store') ? 'block' : 'none';
+      }
+
+      visitTypeEl.addEventListener('change', updateFieldVisibility);
+      updateFieldVisibility();
+
+      // Geolocation
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          document.getElementById('latitude').value = position.coords.latitude;
+          document.getElementById('longitude').value = position.coords.longitude;
+        });
+      }
+
+      document.getElementById('visitForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        statusEl.textContent = 'Submitting...';
+
+        const formData = new FormData(e.target);
+        formData.append('comments', document.getElementById('comments').value); // ✅ Append comment manually
+
+        fetch('https://script.google.com/macros/s/AKfycbyqRZLPKI_eno-8OfoRl9VwG51xjGwOf5ZqbakCWsiAhTb-Ca2MUQKHzcai4zr76-zk/exec', {
+          method: 'POST',
+          body: formData
+        })
+        .then(() => {
+          statusEl.textContent = '✅ Visit recorded successfully!';
+          statusEl.className = 'success';
+          e.target.reset();
+        })
+        .catch(err => {
+          console.error(err);
+          statusEl.textContent = '❌ Error submitting visit.';
+          statusEl.className = 'error';
+        });
+      });
+    });
+  </script>
+  <style>
+    body { font-family: Arial; margin: 20px; max-width: 700px; margin: auto; }
+    img { display: block; margin: 0 auto 20px; max-width: 180px; }
+    form input, form select, form textarea, form button {
+      display: block; width: 100%; padding: 10px; margin-bottom: 15px;
+    }
+    .success { color: green; }
+    .error { color: red; }
+  </style>
+</head>
+<body>
+  <img src="logo.png" alt="Vitaminca Logo">
+  <h2>Submit Visit Report</h2>
+  <form id="visitForm">
+    <input type="text" name="repName" value="Sharique" readonly />
+    <select name="visitType" id="visitType" required>
+      <option value="">Visit Type</option>
+      <option value="Doctor">Doctor</option>
+      <option value="Pharmacy">Pharmacy</option>
+      <option value="Drug Store">Drug Store</option>
+    </select>
+    <input type="text" name="personName" placeholder="Person Name" required />
+    <input type="text" name="accountName" placeholder="Account Name" required />
+    <input type="text" name="contactNumber" placeholder="Contact Number" required />
+    <select name="specialty" required>
+      <option value="">Select Specialty</option>
+      <option value="GP">GP</option>
+      <option value="PEDIATRICS">PEDIATRICS</option>
+      <option value="FAMILY MEDICINE">FAMILY MEDICINE</option>
+      <option value="PHARMACIST">PHARMACIST</option>
+      <option value="PURCHASER">PURCHASER</option>
+      <option value="OTHERS">OTHERS</option>
+    </select>
+    <select name="prescribingStatus" required>
+      <option value="">Prescribing Status</option>
+      <option value="Prescribed">Prescribed</option>
+      <option value="Considering">Considering</option>
+      <option value="Refused">Refused</option>
+      <option value="Already Prescribing">Already Prescribing</option>
+    </select>
+    <div id="pharmacyFields" style="display: none;">
+      <input type="text" name="pharmacyStock" placeholder="Pharmacy Stock" />
+      <input type="text" name="movementLevel" placeholder="Movement Level" />
+    </div>
+    <input type="hidden" name="latitude" id="latitude" />
+    <input type="hidden" name="longitude" id="longitude" />
+    <textarea id="comments" name="comments" rows="4" placeholder="Additional Comments"></textarea>
+    <button type="submit">Submit</button>
+    <div id="status"></div>
+  </form>
+</body>
+</html>
