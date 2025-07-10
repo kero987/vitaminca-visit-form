@@ -1,0 +1,125 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visit Report Form</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      box-sizing: border-box;
+    }
+    .success {
+      color: green;
+      margin-top: 15px;
+    }
+    .error {
+      color: red;
+      margin-top: 15px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 15px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Visit Report</h1>
+  <form id="visitForm">
+    <label for="repName">Rep Name</label>
+    <input type="text" id="repName" name="repName" required>
+
+    <label for="visitType">Visit Type</label>
+    <select id="visitType" name="visitType" required>
+      <option value="Doctor">Doctor</option>
+      <option value="Pharmacy">Pharmacy</option>
+      <option value="Drug Store">Drug Store</option>
+    </select>
+
+    <label for="personName">Person Name</label>
+    <input type="text" id="personName" name="personName" required>
+
+    <label for="accountName">Account Name</label>
+    <input type="text" id="accountName" name="accountName" required>
+
+    <label for="contactNumber">Contact Number</label>
+    <input type="tel" id="contactNumber" name="contactNumber">
+
+    <label for="specialty">Specialty</label>
+    <input type="text" id="specialty" name="specialty">
+
+    <label for="prescribingStatus">Prescribing Status</label>
+    <select id="prescribingStatus" name="prescribingStatus">
+      <option value="Prescribed">Prescribed</option>
+      <option value="Considering">Considering</option>
+      <option value="Refused">Refused</option>
+      <option value="Already Prescribing">Already Prescribing</option>
+    </select>
+
+    <label for="pharmacyStock">Pharmacy Stock</label>
+    <input type="text" id="pharmacyStock" name="pharmacyStock">
+
+    <label for="movementLevel">Movement Level</label>
+    <input type="text" id="movementLevel" name="movementLevel">
+
+    <label for="latitude">Latitude</label>
+    <input type="text" id="latitude" name="latitude">
+
+    <label for="longitude">Longitude</label>
+    <input type="text" id="longitude" name="longitude">
+
+    <button type="submit">Submit Visit</button>
+    <div id="status"></div>
+  </form>
+
+  <script>
+    document.getElementById('visitForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const statusEl = document.getElementById('status');
+      statusEl.textContent = 'Submitting...';
+
+      const formData = new FormData();
+      formData.append('repName', document.getElementById('repName').value);
+      formData.append('visitType', document.getElementById('visitType').value);
+      formData.append('personName', document.getElementById('personName').value);
+      formData.append('accountName', document.getElementById('accountName').value);
+      formData.append('contactNumber', document.getElementById('contactNumber').value);
+      formData.append('specialty', document.getElementById('specialty').value);
+      formData.append('prescribingStatus', document.getElementById('prescribingStatus').value);
+      formData.append('pharmacyStock', document.getElementById('pharmacyStock').value);
+      formData.append('movementLevel', document.getElementById('movementLevel').value);
+      formData.append('latitude', document.getElementById('latitude').value);
+      formData.append('longitude', document.getElementById('longitude').value);
+
+      fetch('https://script.google.com/macros/s/AKfycbz7n-H5JX4oiG4BreAeFDdsYXmRG8k0ouXCbElmMilj9eMVDFU9EH_e67tq4_sY69A8bw/exec', {
+        method: 'POST',
+        body: formData
+      })
+      .then(() => {
+        statusEl.textContent = '✅ Visit recorded successfully!';
+        statusEl.className = 'success';
+        document.getElementById('visitForm').reset();
+      })
+      .catch(err => {
+        console.error(err);
+        statusEl.textContent = '❌ Error submitting visit.';
+        statusEl.className = 'error';
+      });
+    });
+  </script>
+</body>
+</html>
